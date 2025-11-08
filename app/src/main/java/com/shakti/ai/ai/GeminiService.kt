@@ -1,16 +1,15 @@
 package com.shakti.ai.ai
 
-import android.R.attr.text
 import android.content.Context
 import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.content
 import com.shakti.ai.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GeminiService(context: Context) {
 
-    private val apiKey = BuildConfig.GEMINI_API_KEY
+    private val apiKey = BuildConfig.GEMINI_API_KEY.takeIf { it.isNotBlank() } ?: "DEMO_MODE"
+    private val isApiKeyValid = apiKey != "DEMO_MODE" && apiKey != "your_api_key_here"
 
     // System instructions for different AI purposes
     private val sathiSystemInstruction = """
@@ -172,51 +171,70 @@ class GeminiService(context: Context) {
         - Keep language simple and jargon-free
     """.trimIndent()
 
-    // Different specialized models for different AI purposes
-    private val sathiModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    // Different specialized models for different AI purposes - LAZY INITIALIZATION
+    private val sathiModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
-    private val nyayaModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    private val nyayaModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
-    private val dhanShaktiModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    private val dhanShaktiModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
-    private val gyaanModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    private val gyaanModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
-    private val swasthyaModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    private val swasthyaModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
-    private val rakshaModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    private val rakshaModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
-    private val arogyaModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    private val arogyaModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
     // Generic model for other tasks
-    private val generalModel = GenerativeModel(
-        modelName = "gemini-2.0-flash-exp",
-        apiKey = apiKey
-    )
+    private val generalModel by lazy {
+        GenerativeModel(
+            modelName = "gemini-2.0-flash-exp",
+            apiKey = apiKey
+        )
+    }
 
     // Call Sathi AI for mental health
     suspend fun callSathiAI(userMessage: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext getDemoResponse("sathi", userMessage)
+            }
             val fullPrompt = "$sathiSystemInstruction\n\nUser: $userMessage"
             val response = sathiModel.generateContent(fullPrompt)
             response.text ?: "I'm here to support you. Could you tell me more?"
@@ -228,6 +246,9 @@ class GeminiService(context: Context) {
     // Call Nyaya AI for legal advice
     suspend fun callNyayaAI(userMessage: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext getDemoResponse("nyaya", userMessage)
+            }
             val fullPrompt = "$nyayaSystemInstruction\n\nUser: $userMessage"
             val response = nyayaModel.generateContent(fullPrompt)
             response.text ?: "Let me help you understand your legal rights."
@@ -239,6 +260,9 @@ class GeminiService(context: Context) {
     // Call Dhan Shakti AI for financial advice
     suspend fun callDhanShaktiAI(userMessage: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext getDemoResponse("dhanshakti", userMessage)
+            }
             val fullPrompt = "$dhanShaktiSystemInstruction\n\nUser: $userMessage"
             val response = dhanShaktiModel.generateContent(fullPrompt)
             response.text ?: "Let's work on your financial independence."
@@ -250,6 +274,9 @@ class GeminiService(context: Context) {
     // Call Gyaan AI for education
     suspend fun callGyaanAI(userMessage: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext getDemoResponse("gyaan", userMessage)
+            }
             val fullPrompt = "$gyaanSystemInstruction\n\nUser: $userMessage"
             val response = gyaanModel.generateContent(fullPrompt)
             response.text ?: "Let's find the best learning path for you."
@@ -261,6 +288,9 @@ class GeminiService(context: Context) {
     // Call Swasthya AI for health
     suspend fun callSwasthyaAI(userMessage: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext getDemoResponse("swasthya", userMessage)
+            }
             val fullPrompt = "$swasthyaSystemInstruction\n\nUser: $userMessage"
             val response = swasthyaModel.generateContent(fullPrompt)
             response.text ?: "Let me help with your health and wellness."
@@ -272,6 +302,9 @@ class GeminiService(context: Context) {
     // Call Raksha AI for domestic violence support
     suspend fun callRakshaAI(userMessage: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext getDemoResponse("raksha", userMessage)
+            }
             val fullPrompt = "$rakshaSystemInstruction\n\nUser: $userMessage"
             val response = rakshaModel.generateContent(fullPrompt)
             response.text ?: "Your safety is our priority. How can I help?"
@@ -283,6 +316,9 @@ class GeminiService(context: Context) {
     // Call Arogya AI for general health advice
     suspend fun callArogyaAI(userMessage: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext getDemoResponse("arogya", userMessage)
+            }
             val response = arogyaModel.generateContent(userMessage)
             response.text ?: "Let me provide you with general health advice."
         } catch (e: Exception) {
@@ -295,6 +331,9 @@ class GeminiService(context: Context) {
         messages: List<Pair<String, String>>
     ): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext "Thank you for sharing. In demo mode, full conversation history is not available. Please add your Gemini API key in local.properties for full functionality."
+            }
             val chat = sathiModel.startChat()
             for ((role, text) in messages) {
                 chat.sendMessage(text)
@@ -309,10 +348,27 @@ class GeminiService(context: Context) {
     // General purpose AI call
     suspend fun generateContent(prompt: String): String = withContext(Dispatchers.IO) {
         try {
+            if (!isApiKeyValid) {
+                return@withContext "Demo mode: Please add your Gemini API key in local.properties for full AI functionality."
+            }
             val response = generalModel.generateContent(prompt)
             response.text ?: "No response generated"
         } catch (e: Exception) {
             "Error: ${e.message}"
+        }
+    }
+
+    // Demo responses when API key is not configured
+    private fun getDemoResponse(module: String, userMessage: String): String {
+        return when (module) {
+            "sathi" -> "Thank you for sharing. I'm here to listen and support you. In demo mode, responses are limited. Please add your Gemini API key in local.properties for full AI-powered conversations."
+            "nyaya" -> "I can help you understand your legal rights. For full legal advice powered by AI, please add your Gemini API key in local.properties."
+            "dhanshakti" -> "Let's work on your financial goals. For personalized AI-powered financial advice, please add your Gemini API key in local.properties."
+            "gyaan" -> "I can help you learn and grow. For AI-powered education recommendations, please add your Gemini API key in local.properties."
+            "swasthya" -> "Your health and wellness matter. For AI-powered health insights, please add your Gemini API key in local.properties."
+            "raksha" -> "Your safety is our priority. For AI-powered safety planning, please add your Gemini API key in local.properties."
+            "arogya" -> "Let's work on your health goals. For AI-powered health advice, please add your Gemini API key in local.properties."
+            else -> "Demo mode active. Add Gemini API key for full functionality."
         }
     }
 

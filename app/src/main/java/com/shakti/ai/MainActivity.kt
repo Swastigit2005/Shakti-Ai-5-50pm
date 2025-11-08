@@ -36,17 +36,32 @@ class MainActivity : AppCompatActivity() {
         val adapter = ShaktiPagerAdapter(this)
         viewPager.adapter = adapter
 
-        // Disable off-screen page limit for better performance
+        // IMPORTANT: Enable nested scrolling and reduce sensitivity for better vertical scroll
+        viewPager.isUserInputEnabled = true
         viewPager.offscreenPageLimit = 1
+
+        // Reduce touch slop to make vertical scrolling easier inside fragments
+        try {
+            val recyclerView = viewPager.getChildAt(0)
+            recyclerView?.apply {
+                overScrollMode = ViewPager2.OVER_SCROLL_NEVER
+                // This allows nested scrolling to work properly
+                (this as? androidx.recyclerview.widget.RecyclerView)?.apply {
+                    isNestedScrollingEnabled = true
+                }
+            }
+        } catch (e: Exception) {
+            // Ignore if optimization fails
+        }
 
         // Connect TabLayout with ViewPager2
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = when (position) {
-                0 -> "🧠 Sathi AI"      // Mental health support
+                0 -> "💬 Sathi AI"      // Mental health support
                 1 -> "🛡️ Guardian AI"   // Physical safety
                 2 -> "⚖️ Nyaya AI"      // Legal advisor
                 3 -> "💰 Dhan Shakti"   // Financial literacy
-                4 -> "🤝 Sangam"        // Community connections
+                4 -> "👥 Sangam"        // Community connections
                 5 -> "📚 Gyaan"         // Education guidance
                 6 -> "❤️ Swasthya"     // Health companion
                 7 -> "🔒 Raksha"        // DV support
@@ -72,13 +87,13 @@ class MainActivity : AppCompatActivity() {
             */
         }.attach()
 
-        // Set up smooth scrolling
-        viewPager.setPageTransformer { page, position ->
-            page.apply {
-                translationX = -position * width
-                alpha = 1 - kotlin.math.abs(position)
-            }
-        }
+        // Remove page transformer to avoid interfering with scrolling
+        // viewPager.setPageTransformer { page, position ->
+        //     page.apply {
+        //         translationX = -position * width
+        //         alpha = 1 - kotlin.math.abs(position)
+        //     }
+        // }
 
         // Handle back press with new API
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
